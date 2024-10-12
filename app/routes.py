@@ -1,17 +1,22 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for
 from .models import *
 from . import db
 
 main = Blueprint('main', __name__)
 
 
-@main.route('/admins', methods=['GET'])
+@main.route('/')
+def index():
+    return redirect(url_for('admin.index'))
+
+
+@main.route('/get/admins', methods=['GET'])
 def get_admins():
     admins = Admin.query.all()
-    r<ScrollWheelDown>turn jsonify([{"id": a.id, "username": a.username, "email": a.email,
+    return jsonify([{"id": a.id, "username": a.username, "email": a.email,
                      "role": a.role} for a in admins])
 
-@main.route('/admin', methods=['POST'])
+@main.route('/add/admin', methods=['POST'])
 def add_admin():
     data = request.get_json()
     new_admin = Admin(username=data['username'], email=data['email'],
@@ -79,3 +84,17 @@ def add_project():
     return jsonfiy({"message": "Project added"})
 
 
+@main.route('/groups', methods=['GET'])
+def get_groups():
+    groups = Group.query.all()
+    return jsonify([{"id": g.id, "number": g.number} for g in groups])
+
+@main.route('/group', methods=['POST'])
+def add_group():
+    data = request.get_json()
+    new_project = Group(number=data['number'])
+
+    db.session.add(new_project)
+    db.session.commit()
+
+    return jsonify({"message": "Group added"}), 201
