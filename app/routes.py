@@ -12,14 +12,14 @@ def index():
 
 @main.route('/get/admins', methods=['GET'])
 def get_admins():
-    admins = Admin.query.all()
+    admins = AdminUser.query.all()
     return jsonify([{"id": a.id, "username": a.username, "email": a.email,
                      "role": a.role} for a in admins])
 
-@main.route('/add/admin', methods=['POST'])
+@main.route('/admin', methods=['POST'])
 def add_admin():
     data = request.get_json()
-    new_admin = Admin(username=data['username'], email=data['email'],
+    new_admin = AdminUser(username=data['username'], email=data['email'],
                       role=data['role'])
 
     db.session.add(new_admin)
@@ -46,7 +46,7 @@ def add_employee():
     db.session.add(new_employee)
     db.session.commit()
 
-    return jsonfiy({"message": "Employee added"}), 201
+    return jsonify({"message": "Employee added"}), 201
 
 
 @main.route('/customers', methods=['GET'])
@@ -81,7 +81,7 @@ def add_project():
     db.session.add(new_project)
     db.session.commit()
 
-    return jsonfiy({"message": "Project added"})
+    return jsonify({"message": "Project added"})
 
 
 @main.route('/groups', methods=['GET'])
